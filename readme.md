@@ -1,2 +1,2 @@
-Purple School
-Golang advanced
+#Purple School
+#Golang advanced
