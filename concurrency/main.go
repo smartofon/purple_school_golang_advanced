@@ -13,32 +13,47 @@ func square(n int) int {
 func main() {
 
 	n := 10
-	ch := make(chan int)
-	var wg sync.WaitGroup
+	ch1 := make(chan int)
+	ch2 := make(chan int)
+	var wg1 sync.WaitGroup
+	var wg2 sync.WaitGroup
 
 	result := make([]int, 0)
 
-	wg.Add(1)
+	wg1.Add(1)
 	go func() {
+		numbers := make([]int, 0)
 		for i := 0; i < n; i++ {
-			wg.Add(1)
-			go func() {
-				value := rand.IntN(100) + 1
-				ch <- square(value)
-				wg.Done()
-			}()
+			numbers = append(numbers, rand.IntN(100)+1)
 		}
-		wg.Done()
+		for _, value := range numbers {
+			ch1 <- value
+		}
+		wg1.Done()
+	}()
+
+	wg2.Add(1)
+	go func() {
+		for value := range ch1 {
+			ch2 <- square(value)
+		}
+		wg2.Done()
 	}()
 
 	go func() {
-		wg.Wait()
-		close(ch)
+		wg1.Wait()
+		close(ch1)
 	}()
 
-	for res := range ch {
+	go func() {
+		wg2.Wait()
+		close(ch2)
+	}()
+
+	for res := range ch2 {
 		result = append(result, res)
 	}
 
 	fmt.Println(result)
+
 }
