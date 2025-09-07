@@ -1,2 +1,0 @@
-Purple School
-Golang advanced
