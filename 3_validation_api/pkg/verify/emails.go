@@ -20,8 +20,8 @@ func SendVerify(login string, server configs.SendMailConfig) {
 
 	h := createHash(10)
 
-	e.Text = []byte(fmt.Sprintf("Используйте для восстановления пароля ключ восстановленияЖ %s", h))
-	e.HTML = []byte(fmt.Sprintf("<b>%s</b>", fmt.Sprintf("Используйте для восстановления пароля ключ восстановленияЖ %s", createHash(10))))
+	e.Text = []byte(fmt.Sprintf("Используйте для восстановления пароля ключ восстановления: %s", h))
+	e.HTML = []byte(fmt.Sprintf("<b>%s</b>", fmt.Sprintf("Используйте для восстановления пароля ключ восстановления: %s", h)))
 
 	err := e.Send(server.Address, smtp.PlainAuth("", server.Email, server.Password, server.Host))
 	if err != nil {
