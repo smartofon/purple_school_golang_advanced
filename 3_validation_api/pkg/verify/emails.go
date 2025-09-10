@@ -30,14 +30,19 @@ func SendVerify(login string, server configs.SendMailConfig) {
 
 	if storage.GlobalStorage != nil {
 		fmt.Println("Сохраняем хранилище")
-		storage.GlobalStorage.Set(h, login)
+		storage.GlobalStorage.Set(login, h)
 		storage.GlobalStorage.Save()
 	}
 }
 
-func VerifyHash(hash string) bool {
-	_, ok := storage.GlobalStorage.Get(hash)
-	return ok
+func VerifyHash(login string, hash string) bool {
+	h, ok := storage.GlobalStorage.Get(login)
+	return ok && h == hash
+}
+
+func DeleteHash(login string) {
+	storage.GlobalStorage.Delete(login)
+	storage.GlobalStorage.Save()
 }
 
 func createHash(length int) string {
