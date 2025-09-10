@@ -32,3 +32,5 @@ go.work.sum
 .vscode/
 go.mod
 go.sum
+3_validation_api/storage/test_email.json
+3_validation_api/storage/verify.json
