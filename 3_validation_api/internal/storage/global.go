@@ -65,7 +65,7 @@ func (s *VerifyStorage) Save() error {
 }
 
 func (s *VerifyStorage) Delete(key string) {
-	s.mu.RLock()
+	s.mu.Lock()
 	defer s.mu.RUnlock()
 	delete(s.Data, key)
 }

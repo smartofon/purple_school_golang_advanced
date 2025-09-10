@@ -31,22 +31,24 @@ func (handler *VerifyHandler) Send(conf configs.AppConfig) http.HandlerFunc {
 func (handler *VerifyHandler) Verify() http.HandlerFunc {
 	return func(writer http.ResponseWriter, r *http.Request) {
 		hash := r.PathValue("hash")
-		body, err := req.HandleBody[VerifyRequest](&writer, r)
-		if err != nil {
-			return
-		}
 
 		resp := VerifyResponce{
 			Result: "ok",
 		}
 
-		if !VerifyHash(body.Email, hash) {
+		if hash == "" {
+			resp.Result = "error"
+			req.Json(writer, resp, 402)
+			return
+		}
+
+		if !VerifyHash(hash) {
 			resp.Result = "error"
 			req.Json(writer, resp, 403)
 			return
 		}
 
-		DeleteHash(body.Email)
+		DeleteHash(hash)
 		req.Json(writer, resp, 200)
 	}
 }

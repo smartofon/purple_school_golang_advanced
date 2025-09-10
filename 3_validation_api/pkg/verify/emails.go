@@ -20,8 +20,10 @@ func SendVerify(login string, server configs.SendMailConfig) {
 
 	h := createHash(10)
 
-	e.Text = []byte(fmt.Sprintf("Используйте для восстановления пароля ключ восстановления: %s", h))
-	e.HTML = []byte(fmt.Sprintf("<b>%s</b>", fmt.Sprintf("Используйте для восстановления пароля ключ восстановления: %s", h)))
+	url := fmt.Sprintf("http://localhost:8081/verify/%s", h)
+
+	e.Text = []byte(fmt.Sprintf("Используйте для восстановления пароля перейдите по ссылке: %s", url))
+	e.HTML = []byte(fmt.Sprintf("<b>%s</b>", fmt.Sprintf("Используйте для восстановления перейдите по ссылке: <a href=\"%s\">%s</a>", url, url)))
 
 	err := e.Send(server.Address, smtp.PlainAuth("", server.Email, server.Password, server.Host))
 	if err != nil {
@@ -30,18 +32,18 @@ func SendVerify(login string, server configs.SendMailConfig) {
 
 	if storage.GlobalStorage != nil {
 		fmt.Println("Сохраняем хранилище")
-		storage.GlobalStorage.Set(login, h)
+		storage.GlobalStorage.Set(h, login)
 		storage.GlobalStorage.Save()
 	}
 }
 
-func VerifyHash(login string, hash string) bool {
-	h, ok := storage.GlobalStorage.Get(login)
-	return ok && h == hash
+func VerifyHash(hash string) bool {
+	_, ok := storage.GlobalStorage.Get(hash)
+	return ok
 }
 
-func DeleteHash(login string) {
-	storage.GlobalStorage.Delete(login)
+func DeleteHash(hash string) {
+	storage.GlobalStorage.Delete(hash)
 	storage.GlobalStorage.Save()
 }
 
